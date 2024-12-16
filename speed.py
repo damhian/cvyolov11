@@ -77,7 +77,10 @@ class SpeedEstimator:
             if t_id not in self.trk_pt:
                 self.trk_pt[t_id] = 0
 
-            speed_label = f"{int(self.spd[t_id])} km/h" if t_id in self.spd else self.names[int(cls)]
+            # speed_label = f"{int(self.spd[t_id])} km/h" if t_id in self.spd else self.names[int(cls)]
+            speed = self.spd.get(t_id, 0)  # Get the speed if calculated, or default to 0
+            speed_label = f"{self.names[int(cls)]} | {speed:.2f} km/h"
+
             bbox_color = colors(int(t_id), True)
 
             annotator.box_label(box, speed_label, bbox_color)
@@ -110,7 +113,6 @@ class SpeedEstimator:
                 return
 
         return im0
-
 
 if __name__ == "__main__":
     names = {0: "person", 1: "car"}  # example class names
