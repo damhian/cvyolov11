@@ -3,6 +3,7 @@ from ultralytics import YOLO
 from speed import SpeedEstimator
 import tkinter as tk
 from tkinter import filedialog
+from ultralytics.engine.results import Boxes
 
 # Load YOLOv11 model
 model = YOLO("yolo11s.pt")
@@ -72,13 +73,28 @@ while True:
     
     # Perform object tracking
     results_list = model.track(frame, persist=True)  # Returns a list
-
+    
+    # Filter results and exclude "person" class (class index 0)
+    filtered_results_list = []
     for result in results_list:
         if result.boxes:  # Ensure there are detections in this result
+            # Filter out "person" class
+            filtered_boxes_tensor = result.boxes.cls != 0  # Exclude class index 0
+            filtered_boxes = result.boxes[filtered_boxes_tensor]
+            # Get the original image shape (frame shape)
+            orig_shape = frame.shape[:2]  # Get the (height, width) of the frame
+            # Replace result.boxes with filtered Boxes object
+            result.boxes = Boxes(filtered_boxes.data, orig_shape=orig_shape)
+            filtered_results_list.append(result)
+            
+    for result in filtered_results_list:
+        if result.boxes:
             for box in result.boxes:
                 # Extract class index, confidence, and bounding box coordinates
                 obj_class = int(box.cls)  # Class index
                 obj_name = names[obj_class]  # Map index to class name
+                   
+                # Object counting logic
                 bbox = box.xyxy[0].cpu().numpy()  # Convert tensor to NumPy array
                 obj_center = ((bbox[0] + bbox[2]) // 2, (bbox[1] + bbox[3]) // 2)
 

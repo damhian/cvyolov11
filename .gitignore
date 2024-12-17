@@ -2,3 +2,10 @@ videos/
 images/
 images1/
 __pycache__/
+detected_plates/
+license_plate_recognition/
+runs/
+TFT-ID.v1i.yolov11/
+output.avi
+License Plate Recognition.v8i.yolov11.zip
+TFT-ID.v1i.yolov11.zip

@@ -1,5 +1,3 @@
-
-
 from collections import defaultdict
 from time import time
 
@@ -79,11 +77,20 @@ class SpeedEstimator:
 
             # speed_label = f"{int(self.spd[t_id])} km/h" if t_id in self.spd else self.names[int(cls)]
             speed = self.spd.get(t_id, 0)  # Get the speed if calculated, or default to 0
-            speed_label = f"{self.names[int(cls)]} | {speed:.2f} km/h"
+            # speed_label = f"{self.names[int(cls)]} | {speed:.2f} km/h"
+            # speed_label = f"{self.names[int(cls)]}\n{speed:.2f} km/h"
+            
+            class_name = self.names[int(cls)]
+            speed_label = f"{speed:.2f} km/h"
 
             bbox_color = colors(int(t_id), True)
 
-            annotator.box_label(box, speed_label, bbox_color)
+            annotator.box_label(box, class_name, bbox_color)
+            
+            # Draw the speed label below the class name using cv2.putText
+            text_position = (int(box[0]), int(box[1]) + 20)  # Adjust the y-position to place it below the class name
+            cv2.putText(im0, speed_label, text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.6, bbox_color, 2)
+            
             cv2.polylines(im0, [trk_pts], isClosed=False, color=bbox_color, thickness=self.tf)
             cv2.circle(im0, (int(track[-1][0]), int(track[-1][1])), self.tf * 2, bbox_color, -1)
 
